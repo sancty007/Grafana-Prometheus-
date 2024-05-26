@@ -6,6 +6,14 @@ Voici comment vous pouvez intégrer Nextcloud à votre challenge :
 
 Commencez par déployer Nextcloud sur votre infrastructure de test. Vous pouvez le faire en utilisant Docker, en utilisant un serveur web comme Apache ou Nginx, ou en le déployant sur un service d'hébergement cloud.
 
+```bash
+  docker run -d --name nexcloud -p 3084:80 nextcloud
+```
+
+```bash
+  docker network connect monitoring nextcloud
+```
+
 ### 2. Surveillance avec Prometheus
 
 Configurez Prometheus pour collecter des métriques depuis Nextcloud. Vous pouvez utiliser des exportateurs comme le Blackbox Exporter pour surveiller la disponibilité du service Nextcloud via des requêtes HTTP.
@@ -46,7 +54,7 @@ docker run -d --name nextcloud \
   nextcloud
 ```
 
-3. Accédez à Nextcloud en ouvrant votre navigateur et en visitant `http://localhost:8080`.
+3. Accédez à Nextcloud en ouvrant votre navigateur et en visitant `http://localhost:8080`. //http://localhost:3084`
 
 ### 2. Déploiement avec un Serveur Web (Apache ou Nginx)
 
@@ -67,8 +75,6 @@ Si vous souhaitez utiliser un service d'hébergement cloud, vous pouvez :
 Peu importe la méthode que vous choisissez, une fois Nextcloud déployé, vous pouvez commencer à le surveiller avec Prometheus et Grafana en collectant des métriques pertinentes et en configurant des alertes pour assurer un fonctionnement fiable et efficace de votre instance Nextcloud.
 
 ## installation de la solution :
-
-docker run -d --name nexcloud -p 3084:80 nextcloud
 
 ---
 

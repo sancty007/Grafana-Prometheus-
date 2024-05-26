@@ -43,8 +43,13 @@ Excellent, cela signifie que Docker est maintenant correctement installé et fon
      ```
 
    - Lancer le conteneur Prometheus en utilisant ce fichier de configuration :
+
      ```bash
      docker run -d --name=prometheus --network=monitoring -p 9090:9090 -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+     ```
+
+     ```
+      docker run -d --name=prometheus --network=monitoring -p 9090:9090 -v prometheus.yml:/etc/prometheus.yml prom/prometheus
      ```
 
 3. **Lancer Grafana :**
