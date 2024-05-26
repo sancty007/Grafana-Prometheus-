@@ -5,7 +5,7 @@
 - [ ] **Utilisation d'Outils de Collaboration :**
   - [ ] Utilisez des outils comme Slack ou Microsoft Teams pour la communication en temps réel.
   - [ ] Utilisez Trello ou Jira pour la gestion des tâches et le suivi des progrès.
-  - [ ] Utilisez GitHub pour le partage du code et les revues de code.
+  - [x] Utilisez GitHub pour le partage du code et les revues de code.
 - [ ] **Répartition des Rôles :**
   - [ ] Attribuez des rôles spécifiques à chaque membre de l'équipe : gestion de projet, développement, documentation, tests, présentation.
 - [ ] **Réunions Régulières :**
@@ -16,9 +16,9 @@
 #### Stratégies :
 
 - [ ] **Identification des Problèmes Clés :**
-  - [ ] Identifiez un ou plusieurs problèmes critiques que votre solution peut résoudre.
+  - [x] Identifiez un ou plusieurs problèmes critiques que votre solution peut résoudre.
 - [ ] **Mesurer et Démontrer l'Impact :**
-  - [ ] Utilisez des métriques concrètes pour montrer l'impact de votre solution.
+  - [x] Utilisez des métriques concrètes pour montrer l'impact de votre solution.
 - [ ] **Études de Cas et Témoignages :**
   - [ ] Obtenez des retours d'utilisateurs potentiels ou de clients pour montrer l'impact pratique de votre solution.
 
@@ -27,18 +27,18 @@
 #### Stratégies :
 
 - [ ] **Utilisation de Technologies Modernes :**
-  - [ ] Intégrez des fonctionnalités avancées de Prometheus et Grafana.
+  - [x] Intégrez des fonctionnalités avancées de Prometheus et Grafana.
 - [ ] **Approche Créative :**
   - [ ] Proposez des solutions innovantes pour la surveillance.
 - [ ] **Prototypage et Tests Rapides :**
-  - [ ] Créez des prototypes rapides pour tester vos idées innovantes.
+  - [x] Créez des prototypes rapides pour tester vos idées innovantes.
 
 ### 4. Présentation
 
 #### Stratégies :
 
 - [ ] **Clarté et Concision :**
-  - [ ] Préparez une présentation claire et bien structurée.
+  - [x] Préparez une présentation claire et bien structurée.
 - [ ] **Storytelling :**
   - [ ] Racontez une histoire autour de votre projet.
 - [ ] **Démonstrations en Direct :**
