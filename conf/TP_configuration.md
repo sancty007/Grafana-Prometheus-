@@ -48,8 +48,13 @@ Excellent, cela signifie que Docker est maintenant correctement installé et fon
      docker run -d --name=prometheus --network=monitoring -p 9090:9090 -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
      ```
 
-     ```
+     ```bash
       docker run -d --name=prometheus --network=monitoring -p 9090:9090 -v prometheus.yml:/etc/prometheus.yml prom/prometheus
+     ```
+
+     ```powershell
+      docker run -d --name=prometheus --network=monitoring -p 9090:9090 -v ${PWD}\prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+
      ```
 
 3. **Lancer Grafana :**
