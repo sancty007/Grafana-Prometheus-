@@ -1,93 +1,148 @@
-Absolument ! Utiliser Nextcloud comme exemple pour votre challenge de surveillance avec Prometheus et Grafana est une excellente idée. Nextcloud est une application auto-hébergée qui offre des fonctionnalités de partage de fichiers, de collaboration et bien plus encore. En surveillant Nextcloud, vous pouvez obtenir des informations précieuses sur les performances de votre serveur, la disponibilité des services, et la santé de l'application elle-même.
+### Rôle des Services
 
-Voici comment vous pouvez intégrer Nextcloud à votre challenge :
+- **Nextcloud** : Fournit l'interface web de Nextcloud.
+- **Prometheus** : Utilisé pour surveiller les métriques.
+- **Grafana** : Utilisé pour visualiser les métriques surveillées par Prometheus.
+- **Elasticsearch** : Utilisé pour stocker et rechercher les logs et les données.
+- **Logstash** : Utilisé pour collecter, traiter et envoyer les logs à Elasticsearch.
+- **Kibana** : Utilisé pour visualiser les données stockées dans Elasticsearch.
+- **ML (Machine Learning)** : Exécute le script de détection des anomalies.
 
-### 1. Déploiement de Nextcloud
+### Inclusion de Logstash
 
-Commencez par déployer Nextcloud sur votre infrastructure de test. Vous pouvez le faire en utilisant Docker, en utilisant un serveur web comme Apache ou Nginx, ou en le déployant sur un service d'hébergement cloud.
+Logstash est déjà inclus dans le fichier `docker-compose.yml` avec les paramètres nécessaires. Il collecte les logs et les envoie à Elasticsearch.
 
-```bash
-  docker run -d --name nexcloud -p 3084:80 nextcloud
+### Exemple Complet de `docker-compose.yml`
+
+Voici le fichier `docker-compose.yml` complet avec des commentaires pour chaque section :
+
+```yaml
+version: "3.7"
+
+networks:
+  monitoring:
+    driver: bridge
+
+services:
+  nextcloud:
+    image: nextcloud
+    ports:
+      - "8080:80"
+    volumes:
+      - nextcloud:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - monitoring
+
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_PASSWORD: example
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - monitoring
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - monitoring
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.10.0
+    ports:
+      - "5000:5000"
+      - "9600:9600"
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    networks:
+      - monitoring
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.0
+    ports:
+      - "5601:5601"
+    networks:
+      - monitoring
+    depends_on:
+      - elasticsearch
+
+  ml:
+    image: ml-script:latest
+    depends_on:
+      - elasticsearch
+      - prometheus
+    networks:
+      - monitoring
+
+volumes:
+  nextcloud:
+  db:
+  esdata:
 ```
 
-```bash
-  docker network connect monitoring nextcloud
-```
+### Détails des Configurations
 
-### 2. Surveillance avec Prometheus
+1. **Logstash Configuration (logstash.conf)** :
+   - Assurez-vous que votre fichier `logstash.conf` est correctement configuré pour lire les logs et les envoyer à Elasticsearch.
 
-Configurez Prometheus pour collecter des métriques depuis Nextcloud. Vous pouvez utiliser des exportateurs comme le Blackbox Exporter pour surveiller la disponibilité du service Nextcloud via des requêtes HTTP.
+2. **Elasticsearch et Kibana** :
+   - Elasticsearch collecte les logs envoyés par Logstash.
+   - Kibana permet de visualiser ces logs.
 
-### 3. Visualisation dans Grafana
+3. **ML Service** :
+   - Utilise les données d'Elasticsearch et de Prometheus pour la détection des anomalies.
 
-Connectez Grafana à Prometheus comme source de données. Ensuite, créez des tableaux de bord personnalisés dans Grafana pour visualiser les métriques de Nextcloud. Vous pouvez surveiller des métriques telles que :
+### Exécuter les Services
 
-- Utilisation des ressources système (CPU, mémoire, disque)
-- Nombre de connexions simultanées
-- Temps de réponse des requêtes HTTP
-- Statut de la disponibilité du service (up/down)
+1. **Construire l'image Docker du service de machine learning :**
 
-### 4. Configuration des Alertes
+   ```sh
+   docker build -t ml-script:latest .
+   ```
 
-Configurez des alertes dans Prometheus pour être averti en cas de problèmes avec Nextcloud. Par exemple, vous pouvez configurer une alerte pour détecter si le service Nextcloud est indisponible pendant une période prolongée.
+2. **Lancer tous les services :**
 
-### 5. Test et Validation
+   ```sh
+   docker-compose up -d
+   ```
 
-Une fois que tout est configuré, effectuez des tests pour vous assurer que la surveillance fonctionne comme prévu. Testez différentes conditions pour vérifier que les alertes sont déclenchées correctement et que les métriques sont visualisées de manière appropriée dans Grafana.
+3. **Accéder à Grafana :**
 
-En utilisant Nextcloud comme exemple pour votre challenge, vous pouvez non seulement apprendre à surveiller une application réelle, mais aussi acquérir des compétences pratiques dans la configuration et l'utilisation de Prometheus et Grafana pour la surveillance et la visualisation des données.
+   Ouvrez un navigateur web et allez à `http://localhost:3000` pour accéder à Grafana.
 
----
+4. **Vérifier Elasticsearch et Kibana :**
 
-Exactement ! Voici comment vous pouvez déployer Nextcloud en utilisant différentes méthodes :
-
-### 1. Déploiement avec Docker
-
-Si vous optez pour Docker, voici comment vous pouvez déployer Nextcloud :
-
-1. Assurez-vous que Docker est installé sur votre machine.
-2. Utilisez la commande suivante pour démarrer un conteneur Nextcloud avec une base de données MySQL intégrée :
-
-```bash
-docker run -d --name nextcloud \
-  -p 8080:80 \
-  nextcloud
-```
-
-3. Accédez à Nextcloud en ouvrant votre navigateur et en visitant `http://localhost:8080`. //http://localhost:3084`
-
-### 2. Déploiement avec un Serveur Web (Apache ou Nginx)
-
-Si vous préférez utiliser un serveur web comme Apache ou Nginx, vous devrez :
-
-1. Installer le serveur web sur votre machine.
-2. Télécharger et décompresser le code source de Nextcloud dans le répertoire de votre serveur web.
-3. Configurez le serveur web pour servir Nextcloud en utilisant la documentation officielle de Nextcloud et la documentation de votre serveur web.
-
-### 3. Déploiement sur un Service d'Hébergement Cloud
-
-Si vous souhaitez utiliser un service d'hébergement cloud, vous pouvez :
-
-1. Choisir un fournisseur de services cloud comme AWS, Google Cloud, ou DigitalOcean.
-2. Créez une instance de machine virtuelle (VM) sur le fournisseur de cloud.
-3. Suivez les instructions d'installation de Nextcloud pour votre distribution Linux sur la VM.
-
-Peu importe la méthode que vous choisissez, une fois Nextcloud déployé, vous pouvez commencer à le surveiller avec Prometheus et Grafana en collectant des métriques pertinentes et en configurant des alertes pour assurer un fonctionnement fiable et efficace de votre instance Nextcloud.
-
-## installation de la solution :
-
----
-
-global:
-scrape_interval: 15s
-
-scrape_configs:
-
-- job_name: "prometheus"
-  static_configs:
-
-  - targets: ["localhost:9090"]
-
-- job_name: "nextcloud"
-  static_configs:
-  - targets: ["localhost:3084"]
+   - **Elasticsearch** : `http://localhost:9200`
+   - **Kibana** : `http://localhost:5601`
